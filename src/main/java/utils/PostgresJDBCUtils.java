@@ -1,8 +1,10 @@
+package utils;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class PostgresJDBCUtil {
+public class PostgresJDBCUtils {
 
   public static Connection getConnection(String URL, String user, String password) {
     System.out.println("Trying to connect to PostgreSQL");
