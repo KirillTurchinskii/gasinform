@@ -1,7 +1,4 @@
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import utils.InputReaderUtils;
 import utils.PostgresJDBCUtils;
@@ -13,26 +10,26 @@ public class Main {
   static final String PASS = System.getenv("DB_PASSWORD");
 
   public static void main(String[] args) {
-    Connection connection = PostgresJDBCUtils.getConnection(DB_URL, USER, PASS);
-    if (connection == null) {
+    Connection userDataConnection = PostgresJDBCUtils.getConnection(DB_URL, USER, PASS);
+    if (userDataConnection == null) {
       System.out.println("Connection was not established");
       System.exit(0);
     }
+    ProcessorSQL processorSQL = new ProcessorSQL(userDataConnection);
+    processorSQL.printDataBase();
+
     System.out.println("Input username to search data");
     String usernameToSearch = InputReaderUtils.nextString();
-    String sql = "SELECT * FROM user_data where username = '" + usernameToSearch + "';";
-    try {
-      Statement statement = connection.createStatement();
-      ResultSet resultSet = statement.executeQuery(sql);
-      while (resultSet.next()) {
-        System.out.println(resultSet.getString("username") + "\t" +
-                           resultSet.getString("email") + "\t" +
-                           resultSet.getString("surname") + "\t" +
-                           resultSet.getString("name"));
-      }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
+    processorSQL.printAccountDataUsingUsername(usernameToSearch);
+
+    System.out.println("Update table");
+    System.out.println("Pick account username for changing");
+    String username = InputReaderUtils.nextString();
+    System.out.println("Enter new account surname");
+    String newSurname = InputReaderUtils.nextString();
+    processorSQL.changeSurnameOnUsername(username, newSurname);
+
+    processorSQL.printDataBase();
   }
 
 }
