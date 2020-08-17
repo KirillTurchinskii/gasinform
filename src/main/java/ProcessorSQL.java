@@ -52,23 +52,6 @@ public class ProcessorSQL {
     }
   }
 
-  private void closeFinally(Statement statement, ResultSet resultSet) {
-    try {
-      if (statement != null) {
-        statement.close();
-      }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
-    try {
-      if (resultSet != null) {
-        resultSet.close();
-      }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    }
-  }
-
   public void changeSurnameOnUsername(String username, String newSurname) {
     String sql = "UPDATE user_data SET surname = '" + newSurname + "' WHERE username = '" + username + "';";
     Statement statement = null;
@@ -87,6 +70,23 @@ public class ProcessorSQL {
       }
     }
 
+  }
+
+  private void closeFinally(Statement statement, ResultSet resultSet) {
+    try {
+      if (statement != null) {
+        statement.close();
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+    try {
+      if (resultSet != null) {
+        resultSet.close();
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
   }
 
 }
