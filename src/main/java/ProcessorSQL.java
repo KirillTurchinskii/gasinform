@@ -13,43 +13,12 @@ public class ProcessorSQL {
 
   public void printDataBase() {
     String sql = "SELECT * FROM user_data;";
-    Statement statement = null;
-    ResultSet resultSet = null;
-    try {
-      statement = connection.createStatement();
-      resultSet = statement.executeQuery(sql);
-      while (resultSet.next()) {
-        System.out.println(resultSet.getString("id") + "\t" +
-                           resultSet.getString("username") + "\t" +
-                           resultSet.getString("email") + "\t" +
-                           resultSet.getString("surname") + "\t" +
-                           resultSet.getString("name"));
-      }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    } finally {
-      closeFinally(statement, resultSet);
-    }
+    processSQL(sql);
   }
 
   public void printAccountDataUsingUsername(String usernameToSearch) {
     String sql = "SELECT * FROM user_data where username = '" + usernameToSearch + "';";
-    Statement statement = null;
-    ResultSet resultSet = null;
-    try {
-      statement = connection.createStatement();
-      resultSet = statement.executeQuery(sql);
-      while (resultSet.next()) {
-        System.out.println(resultSet.getString("username") + "\t" +
-                           resultSet.getString("email") + "\t" +
-                           resultSet.getString("surname") + "\t" +
-                           resultSet.getString("name"));
-      }
-    } catch (SQLException throwables) {
-      throwables.printStackTrace();
-    } finally {
-      closeFinally(statement, resultSet);
-    }
+    processSQL(sql);
   }
 
   public void changeSurnameOnUsername(String username, String newSurname) {
@@ -70,6 +39,30 @@ public class ProcessorSQL {
       }
     }
 
+  }
+
+  private void printResultSet(ResultSet resultSet) throws SQLException {
+    while (resultSet.next()) {
+      System.out.println(resultSet.getString("id") + "\t" +
+                         resultSet.getString("username") + "\t" +
+                         resultSet.getString("email") + "\t" +
+                         resultSet.getString("surname") + "\t" +
+                         resultSet.getString("name"));
+    }
+  }
+
+  private void processSQL(String sql) {
+    Statement statement = null;
+    ResultSet resultSet = null;
+    try {
+      statement = connection.createStatement();
+      resultSet = statement.executeQuery(sql);
+      printResultSet(resultSet);
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      closeFinally(statement, resultSet);
+    }
   }
 
   private void closeFinally(Statement statement, ResultSet resultSet) {

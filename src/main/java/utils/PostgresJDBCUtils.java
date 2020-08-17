@@ -9,11 +9,7 @@ public class PostgresJDBCUtils {
   public static Connection getConnection(String URL, String user, String password) {
     System.out.println("Trying to connect to PostgreSQL");
 
-    try {
-      Class.forName("org.postgresql.Driver");
-    } catch (ClassNotFoundException e) {
-      System.out.println("PostgreSQL JDBC Driver is not found. Include it in your library path ");
-      e.printStackTrace();
+    if (testDriver()) {
       return null;
     }
 
@@ -36,6 +32,17 @@ public class PostgresJDBCUtils {
       System.out.println("Failed to make connection to database");
     }
     return connection;
+  }
+
+  private static boolean testDriver() {
+    try {
+      Class.forName("org.postgresql.Driver");
+    } catch (ClassNotFoundException e) {
+      System.out.println("PostgreSQL JDBC Driver is not found. Include it in your library path ");
+      e.printStackTrace();
+      return true;
+    }
+    return false;
   }
 
 }

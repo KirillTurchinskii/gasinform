@@ -1,4 +1,5 @@
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import utils.InputReaderUtils;
 
@@ -13,9 +14,19 @@ public class ProgramLogic {
     switch (mod) {
       case 0:
         programLogic.findDataUsingUsername(processorSQL);
+        try {
+          userDataConnection.close();
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
         break;
       case 1:
         programLogic.changeSurname(processorSQL);
+        try {
+          userDataConnection.close();
+        } catch (SQLException throwables) {
+          throwables.printStackTrace();
+        }
         processorSQL.printDataBase();
         break;
       default:
