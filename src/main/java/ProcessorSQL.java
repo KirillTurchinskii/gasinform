@@ -28,20 +28,7 @@ public class ProcessorSQL {
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     } finally {
-      try {
-        if (statement != null) {
-          statement.close();
-        }
-      } catch (SQLException throwables) {
-        throwables.printStackTrace();
-      }
-      try {
-        if (resultSet != null) {
-          resultSet.close();
-        }
-      } catch (SQLException throwables) {
-        throwables.printStackTrace();
-      }
+      closeFinally(statement, resultSet);
     }
   }
 
@@ -61,20 +48,24 @@ public class ProcessorSQL {
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     } finally {
-      try {
-        if (statement != null) {
-          statement.close();
-        }
-      } catch (SQLException throwables) {
-        throwables.printStackTrace();
+      closeFinally(statement, resultSet);
+    }
+  }
+
+  private void closeFinally(Statement statement, ResultSet resultSet) {
+    try {
+      if (statement != null) {
+        statement.close();
       }
-      try {
-        if (resultSet != null) {
-          resultSet.close();
-        }
-      } catch (SQLException throwables) {
-        throwables.printStackTrace();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+    try {
+      if (resultSet != null) {
+        resultSet.close();
       }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
     }
   }
 
