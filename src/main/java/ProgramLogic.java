@@ -30,8 +30,8 @@ public class ProgramLogic {
           account = new Account(resultSet.getInt("id"),
                                 resultSet.getString("username"),
                                 resultSet.getString("email"),
-                                resultSet.getString("surname"),
-                                resultSet.getString("name"));
+                                resultSet.getString("name"),
+                                resultSet.getString("surname"));
         }
 
       }
