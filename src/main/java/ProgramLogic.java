@@ -1,53 +1,87 @@
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import utils.InputReaderUtils;
+import utils.PostgresJDBCUtils;
 
 public class ProgramLogic {
 
-  public void run(Connection userDataConnection) {
-    ProgramLogic programLogic = new ProgramLogic();
-    ProcessorSQL processorSQL = new ProcessorSQL(userDataConnection);
-    processorSQL.printDataBase();
-    System.out.println("Input '0' to Search by username or '1' to Change surname of certain username");
-    int mod = InputReaderUtils.nextInt();
-    switch (mod) {
-      case 0:
-        programLogic.findDataUsingUsername(processorSQL);
-        try {
-          userDataConnection.close();
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
+  final String url;
+  final String user;
+  final String password;
+
+  public ProgramLogic(String url, String user, String password) {
+    this.url = url;
+    this.user = user;
+    this.password = password;
+  }
+
+  public Account getAccountDataByUsername(String username) {
+    Statement statement = null;
+    ResultSet resultSet = null;
+    Account account = new Account();
+    try (Connection connection = PostgresJDBCUtils.getConnection(url, user, password)) {
+      String sql = "SELECT * FROM user_data where username = '" + username + "';";
+      if (connection != null) {
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(sql);
+        if (resultSet.next()) {
+          account = new Account(resultSet.getInt("id"),
+                                resultSet.getString("username"),
+                                resultSet.getString("email"),
+                                resultSet.getString("surname"),
+                                resultSet.getString("name"));
         }
-        break;
-      case 1:
-        programLogic.changeSurname(processorSQL);
-        try {
-          userDataConnection.close();
-        } catch (SQLException throwables) {
-          throwables.printStackTrace();
-        }
-        processorSQL.printDataBase();
-        break;
-      default:
-        System.out.println("There is no such mod");
-        break;
+
+      }
+
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      closeFinally(statement, resultSet);
     }
+    return account;
   }
 
-  private void changeSurname(ProcessorSQL processorSQL) {
-    System.out.println("Update table");
-    System.out.println("Pick account username for changing");
-    String username = InputReaderUtils.nextString();
-    System.out.println("Enter new account surname");
-    String newSurname = InputReaderUtils.nextString();
-    processorSQL.changeSurnameOnUsername(username, newSurname);
+  public int runSurnameUpdate(String username, String newSurname) {
+    Statement statement = null;
+    int updatedNum = 0;
+    try (Connection connection = PostgresJDBCUtils.getConnection(url, user, password)) {
+      String sql = "UPDATE user_data SET surname = '" + newSurname + "' WHERE username = '" + username + "';";
+      if (connection != null) {
+        statement = connection.createStatement();
+        updatedNum = statement.executeUpdate(sql);
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+      } catch (SQLException throwables) {
+        throwables.printStackTrace();
+      }
+    }
+    return updatedNum;
   }
 
-  private void findDataUsingUsername(ProcessorSQL processorSQL) {
-    System.out.println("Input username to search data");
-    String usernameToSearch = InputReaderUtils.nextString();
-    processorSQL.printAccountDataUsingUsername(usernameToSearch);
+  private void closeFinally(Statement statement, ResultSet resultSet) {
+    try {
+      if (statement != null) {
+        statement.close();
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+    try {
+      if (resultSet != null) {
+        resultSet.close();
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
   }
 
 }

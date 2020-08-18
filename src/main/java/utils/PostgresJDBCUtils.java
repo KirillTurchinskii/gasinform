@@ -34,7 +34,7 @@ public class PostgresJDBCUtils {
     return connection;
   }
 
-  private static boolean testDriver() {
+  public static boolean testDriver() {
     try {
       Class.forName("org.postgresql.Driver");
     } catch (ClassNotFoundException e) {
