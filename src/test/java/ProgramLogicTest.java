@@ -11,7 +11,7 @@ public class ProgramLogicTest {
   private static ProgramLogic programLogic = new ProgramLogic(DB_URL, USER, PASS);
 
   @Test
-  public void getAccountDataByUsername() {
+  public void getAccountDataByActualUsername() {
     Account expected = new Account(1,
                                    "ivantop",
                                    "ivan@gmail.com",
@@ -23,7 +23,19 @@ public class ProgramLogicTest {
   }
 
   @Test
-  public void runSurnameUpdate() {
+  public void getAccountDataByFalseUsername() {
+    Account expected = new Account(-1,
+                                   "username",
+                                   "email",
+                                   "name",
+                                   "surname");
+
+    Account actual = programLogic.getAccountDataByUsername("");
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  public void runSurnameUpdateWithActualUsername() {
     int expected = 1;
     Account account = new Account(2,
                                   "Astager",
@@ -36,6 +48,15 @@ public class ProgramLogicTest {
     assertEquals(1, surnameUpdate);
     assertEquals("Astafef", programLogic.getAccountDataByUsername("Astager").getSurname());
     programLogic.runSurnameUpdate("Astager", "Astafiev");
+
+  }
+
+  @Test
+  public void runSurnameUpdateWithFalseUsername() {
+    int expected = 0;
+
+    int surnameUpdate = programLogic.runSurnameUpdate("kfkkrjfrkjfr", "Astafef");
+    assertEquals(expected, surnameUpdate);
 
   }
 
